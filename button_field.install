@@ -1,0 +1,44 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Notify CCK when this module is enabled, disabled, installed, and uninstalled
+ * so CCK can do any necessary preparation or cleanup.
+ */
+
+/**
+ * Implementation of hook_install().
+ */
+function button_field_install() {
+  drupal_load('module', 'content');
+  content_notify('install', 'button_field');
+} // end function button_field_install()
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function button_field_uninstall() {
+  drupal_load('module', 'content');
+  content_notify('uninstall', 'button_field');
+} // end function button_field_uninstall()
+
+/**
+ * Implementation of hook_enable().
+ * 
+ * Notify content module when this module is enabled.
+ */
+function button_field_enable() {
+  drupal_load('module', 'content');
+  content_notify('enable', 'button_field');
+} // end function button_field_enable()
+
+/**
+ * Implementation of hook_disable().
+ * 
+ * Notify content module when this module is disabled.
+ */
+function button_field_disable() {
+  drupal_load('module', 'content');
+  content_notify('disable', 'button_field');
+} // end function button_field_disable()

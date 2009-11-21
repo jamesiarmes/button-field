@@ -1,0 +1,7 @@
+; $Id$
+name = Button Field
+description = Adds a button field type to CCK
+package = CCK
+core = 6.x
+dependencies[] = content
+dependencies[] = rules
