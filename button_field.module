@@ -94,7 +94,7 @@ function button_field_field_settings($op, $field) {
         '#default_value' => (isset($field['url']) ? $field['url']
           : NULL),
 		'#description' => t('If defined, the button will navigate to this url '.
-			'after the ajax call has completed. Set to <current> to reload '.
+			'after the ajax call has completed. Set to &lt;current&gt; to reload '.
 			'the current page.'),
         '#required' => FALSE,
       );
