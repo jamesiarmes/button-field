@@ -163,10 +163,6 @@ function theme_button_field_formatter_default($element) {
 	  break;
   } // end switch $field['widget']['type']
   
-  $return_value .=
-    '<script type="text/javascript">'.
-      '$.button_field.init(\''.$name.'\');</script>'."\n";
-  
   return $return_value;
 } // end function theme_button_field_formatter_default
 
