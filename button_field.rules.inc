@@ -18,10 +18,6 @@ function button_field_rules_event_info() {
     'label' => t('Users Clicks a Button'),
     'module' => 'Button Field',
     'arguments' => array(
-	  'field_name' => array(
-		  'type' => 'string',
-		  'label' => t('Field Name'),
-	  ),
       'node' => array(
           'type' => 'node',
           'label' => t('Node that the button was on')
@@ -58,16 +54,12 @@ function button_field_rules_condition_info() {
  * that was expected.
  * 
  * @param string $button_name
- * @param array $arguemnts
- * @param array $settings
- * @param array $variables
  * @return boolean
- * 
- * @todo find a better way to get the button that was clicked
  */
 function button_field_condition_button_is($button_name, $arguemnts, $settings,
 	$variables) {
-	$field_name = $variables['variables']['field_name']->data->_data;
-	
-	return ($button_name == $field_name);
+  $id = $_REQUEST['id'];
+  list($field_name, $nid) = explode('-', $id);
+  
+  return ($button_name == $field_name);
 } // end function button_field_condition_button_is()
