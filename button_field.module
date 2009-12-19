@@ -30,7 +30,7 @@ function button_field_menu() {
 function button_field_callback() {
   $id = $_REQUEST['id'];
   list($field_name, $nid) = explode('-', $id);
-  rules_invoke_event('button_field_clicked', node_load($nid));
+  rules_invoke_event('button_field_clicked', node_load($nid), $user);
   
   // check to see if we have a page to redirect to
   $return_array = array();

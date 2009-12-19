@@ -22,6 +22,10 @@ function button_field_rules_event_info() {
           'type' => 'node',
           'label' => t('Node that the button was on')
       ),
+      'user' => array(
+        'type' => 'user',
+        'label' => t('Currently logged in user'),
+      ),
     ),
   ); // end $items
   
