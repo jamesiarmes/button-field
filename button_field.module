@@ -8,7 +8,7 @@
 
 /**
  * Implementation of hook_menu().
- * 
+ *
  * @return array
  */
 function button_field_menu() {
@@ -18,33 +18,33 @@ function button_field_menu() {
     'access callback' => true,
     'type' => MENU_CALLBACK,
   ); // end $items
-  
+
   return $items;
 } // end function button_field_menu()
 
 /**
  * Page callback for simple_webservices/soap
- * 
+ *
  * @return string
  */
 function button_field_callback() {
   $id = $_REQUEST['id'];
   list($field_name, $nid) = explode('-', $id);
   rules_invoke_event('button_field_clicked', node_load($nid), $user);
-  
+
   // check to see if we have a page to redirect to
   $return_array = array();
   if (isset($_REQUEST['destination']) && !empty($_REQUEST['destination'])) {
     $return_array['redirect'] = urldecode($_REQUEST['destination']);
   }
-  
+
   echo json_encode($return_array);
   exit;
 } // end function button_field_callback()
 
 /**
  * Implementation of hook_field_info().
- * 
+ *
  * @return array
  */
 function button_field_field_info() {
@@ -55,7 +55,7 @@ function button_field_field_info() {
 
 /**
  * Implementation of hook_widget_info().
- * 
+ *
  * @return array
  */
 function button_field_widget_info() {
@@ -73,7 +73,7 @@ function button_field_widget_info() {
 
 /**
  * Implementation of hook_field_settings().
- * 
+ *
  * @param string $op
  * @param string $field
  * @return array
@@ -81,14 +81,14 @@ function button_field_widget_info() {
 function button_field_field_settings($op, $field) {
   switch ($op) {
     case 'database columns':
-      
+
       $columns['value'] = array('type' => 'varchar', 'length' => '255',
         'not null' => TRUE, 'sortable' => FALSE);
       return $columns;
       break;
-    
+
     case 'form':
-      
+
 	  // hide the multiple and required fields, since buttons don't store
 	  // anything
       $form = array();
@@ -100,7 +100,7 @@ function button_field_field_settings($op, $field) {
 		  '#type' => 'hidden',
 		  '#value' => NULL,
 	  );
-      
+
       return $form;
       break;
   } // end switch $op
@@ -126,37 +126,37 @@ function theme_button_field_formatter_default($element) {
   $node = $element['#node'];
   $field = content_fields($element['#field_name']);
   $name = $field['field_name'].'-'.$node->nid;
-  
+
   // add the javascript and css files
   drupal_add_js(drupal_get_path('module', 'button_field').
 	  '/js/button_field.js');
   drupal_add_css(drupal_get_path('module', 'button_field').
 	  '/css/button_field.css');
-  
+
   // determine the widget type
   switch ($field['widget']['type']) {
     case 'button_field_html':
-      
+
       $return_value = '<button id="'.$name.'" name="'.$name.'" '.
         'class="button_field">'.
 		$field['widget']['text'].'</button>'."\n";
       break;
-    
+
     case 'button_field_image':
-      
+
       $return_value = '<img src="'.$field['widget']['image_path'].'" '.
 		'alt="'.$field['widget']['alt_text'].'" '.
 		'title="'.$field['widget']['title_text'].'" '.
 		'id="'.$name.'" name="'.$name.'" class="button_field" />'."\n";
 	  break;
   } // end switch $field['widget']['type']
-  
+
   return $return_value;
 } // end function theme_button_field_formatter_default
 
 /**
  * Implementation of hook_widget_settings().
- * 
+ *
  * @param string $op
  * @param array $widget
  * @return array
@@ -164,22 +164,48 @@ function theme_button_field_formatter_default($element) {
 function button_field_widget_settings($op, $widget) {
   // check to see if we are saving
   if ($op == 'save') {
-    return array('text', 'image_path', 'title_text', 'alt_text');
+    return array('text', 'image_path', 'title_text', 'alt_text', 'edit_hidden');
   } // end if we are saving
-  
+
   // determine which widget was selected
   switch ($widget['type']) {
     case 'button_field_html':
-      
+
       return _button_field_widget_settings_html($op, $widget);
       break;
-    
+
     case 'button_field_image':
-      
+
       return _button_field_widget_settings_image($op, $widget);
       break;
   } // end switch $widget['type']
 } // end function button_field_widget_settings()
+
+/**
+ * Builds the array of common settings for the button widgets for button fields.
+ * 
+ * Based on code submitted by AlfredSanta.
+ * 
+ * @link http://drupal.org/node/681318
+ * @param string $op
+ * @param array $widget
+ * @return array
+ */
+function _button_field_widget_settings_common($op, $widget) {
+  switch ($op) {
+    case 'form':
+      
+      $form['edit_hidden'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Hide on edit form'),
+        '#default_value' => (isset($widget['edit_hidden'])
+          ? $widget['edit_hidden'] : TRUE),
+      );
+      
+      return $form;
+      break;
+  } // end switch $op
+} // end function _button_field_widget_settings_common()
 
 /**
  * Builds the array of setting for the HTML button widget for button fields.
@@ -201,6 +227,9 @@ function _button_field_widget_settings_html($op, $widget) {
           : $widget['label']),
         '#required' => TRUE,
       );
+      
+      $form = array_merge($form,
+        _button_field_widget_settings_common($op, $widget));
       
       return $form;
       break;
@@ -250,6 +279,9 @@ function _button_field_widget_settings_image($op, $widget) {
         '#required' => FALSE,
       );
       
+      $form = array_merge($form,
+        _button_field_widget_settings_common($op, $widget));
+      
       return $form;
       break;
   } // end switch $op
@@ -294,14 +326,18 @@ function button_field_widget(&$form, &$form_state, $field, $items, $delta = 0) {
   switch ($field['widget']['type']) {
     case 'button_field_html':
       
-      return _button_field_widget_html($form, $form_state, $field, $items,
-        $delta);
+      return ($field['widget']['edit_hidden']
+        ? array()
+        : _button_field_widget_html($form, $form_state, $field, $items,
+          $delta));
       break;
-    
+      
     case 'button_field_image':
       
-      return _button_field_widget_image($form, $form_state, $field, $items,
-        $delta);
+      return ($field['widget']['edit_hidden']
+        ? array()
+        : _button_field_widget_image($form, $form_state, $field, $items,
+          $delta));
       break;
   } // end switch $field['widget']['type']
 } // end function button_field_widget()
@@ -348,7 +384,7 @@ function _button_field_widget_html(&$form, &$form_state, $field, $items,
         ? $field['widget']['text'] : $field['widget']['label']),
     '#attributes' => array('class' => 'button_field_element'),
   );
-  
+
   return $element;
 } // end function _button_field_widget_html()
 
@@ -389,7 +425,7 @@ function _button_field_widget_html(&$form, &$form_state, $field, $items,
 function _button_field_widget_image(&$form, &$form_state, $field, $items,
   $delta) {
   $element = array();
-  
+
   return $element;
 } // end function _button_field_widget_image()
 
@@ -406,7 +442,7 @@ function button_field_theme() {
 
 /**
  * Implementation of CCK's hook_content_is_empty().
- * 
+ *
  * The result of this determines whether content.module will save the value of
  * the field. Note that content module has some interesting behaviors for empty
  * values. It will always save at least one record for every node revision,
