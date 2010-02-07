@@ -386,7 +386,8 @@ function _button_field_widget_html(&$form, &$form_state, $field, $items,
     '#type' => 'button',
     '#default_value' => (isset($field['widget']['text'])
         ? $field['widget']['text'] : $field['widget']['label']),
-    '#attributes' => array('class' => 'button_field_element'),
+    '#attributes' => array('class' => 'button_field'),
+    '#id' => $field['field_name'].'-'.$form['nid']['#value'],
     '#prefix' => '<div class="form-item">',
     '#suffix' => '<div class="description">'.
       (!empty($field['widget']['description']) ? $field['widget']['description']

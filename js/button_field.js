@@ -3,7 +3,7 @@ Drupal.behaviors.buttonFieldBehavior = function(context) {
   $('.button_field').bind('click', function() {
     $.ajax({
       url: Drupal.settings.basePath+'button_field/callback',
-	  dataType: 'json',
+      dataType: 'json',
       data: {id: $(this).attr('id')},
       success: function(data) {
         if (data.redirect) {
@@ -11,5 +11,7 @@ Drupal.behaviors.buttonFieldBehavior = function(context) {
         }
       }
     }); // end $.ajax()
+    
+    return false;
   }); // end function $.bind()
 }; // end function buttonFieldBehavior()
