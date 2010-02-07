@@ -387,6 +387,10 @@ function _button_field_widget_html(&$form, &$form_state, $field, $items,
     '#default_value' => (isset($field['widget']['text'])
         ? $field['widget']['text'] : $field['widget']['label']),
     '#attributes' => array('class' => 'button_field_element'),
+    '#prefix' => '<div class="form-item">',
+    '#suffix' => '<div class="description">'.
+      (!empty($field['widget']['description']) ? $field['widget']['description']
+        : '').'</div></div>',
   );
   
   return $element;
@@ -435,6 +439,10 @@ function _button_field_widget_image(&$form, &$form_state, $field, $items,
       'alt="'.$field['widget']['alt_text'].'" '.
       'title="'.$field['widget']['title_text'].'" '.
       'id="'.$name.'" name="'.$name.'" class="button_field" />'."\n",
+    '#prefix' => '<div class="form-item">',
+    '#suffix' => '<div class="description">'.
+      (!empty($field['widget']['description']) ? $field['widget']['description']
+        : '').'</div></div>',
   ); // end $element
   
   return $element;
