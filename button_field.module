@@ -143,16 +143,16 @@ function theme_button_field_formatter_default($element) {
       
       $return_value = '<button id="'.$name.'" name="'.$name.'" '.
         'class="button_field">'.
-		$field['widget']['text'].'</button>'."\n";
+      $field['widget']['text'].'</button>'."\n";
       break;
     
     case 'button_field_image':
       
       $return_value = '<img src="'.$field['widget']['image_path'].'" '.
-		'alt="'.$field['widget']['alt_text'].'" '.
-		'title="'.$field['widget']['title_text'].'" '.
-		'id="'.$name.'" name="'.$name.'" class="button_field" />'."\n";
-	  break;
+	'alt="'.$field['widget']['alt_text'].'" '.
+	'title="'.$field['widget']['title_text'].'" '.
+	'id="'.$name.'" name="'.$name.'" class="button_field" />'."\n";
+      break;
   } // end switch $field['widget']['type']
   
   return $return_value;
@@ -428,7 +428,14 @@ function _button_field_widget_html(&$form, &$form_state, $field, $items,
  */
 function _button_field_widget_image(&$form, &$form_state, $field, $items,
   $delta) {
-  $element = array();
+  $name = $field['field_name'].'-'.$form['nid']['#value'];
+  $element['value'] = array(
+    '#type' => 'item',
+    '#value' => '<img src="'.$field['widget']['image_path'].'" '.
+      'alt="'.$field['widget']['alt_text'].'" '.
+      'title="'.$field['widget']['title_text'].'" '.
+      'id="'.$name.'" name="'.$name.'" class="button_field" />'."\n",
+  ); // end $element
   
   return $element;
 } // end function _button_field_widget_image()
