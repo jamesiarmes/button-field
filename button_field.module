@@ -98,6 +98,13 @@ function button_field_widget_info() {
  */
 function button_field_field_settings($op, $field) {
   switch ($op) {
+    case 'database columns':
+      
+      $columns['value'] = array('type' => 'varchar', 'length' => '255',
+        'not null' => TRUE, 'sortable' => FALSE, 'views' => TRUE);
+      return $columns;
+      break;
+    
     case 'form':
       
   	  // hide the multiple and required fields, since buttons don't store

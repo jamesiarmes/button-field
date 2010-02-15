@@ -42,3 +42,16 @@ function button_field_disable() {
   drupal_load('module', 'content');
   content_notify('disable', 'button_field');
 } // end function button_field_disable()
+
+/**
+ * Implementation of hook_update_N().
+ */
+function button_field_update_6100() {
+  $ret = array();
+  $columns['value'] = array('type' => 'varchar', 'length' => '255',
+    'not null' => TRUE, 'sortable' => FALSE, 'views' => TRUE);
+  $ret[] = db_query('UPDATE {content_node_field} SET db_columns = \'%s\' '.
+     'WHERE type = \'%s\'', serialize($columns), 'button_field');
+  
+  return $ret;
+} // end function button_field_update_6100()
