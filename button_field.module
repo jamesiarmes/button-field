@@ -211,6 +211,10 @@ function _button_field_widget_settings_common($op, $widget) {
         '#title' => t('Hide on edit form'),
         '#default_value' => (isset($widget['edit_hidden'])
           ? $widget['edit_hidden'] : TRUE),
+        '#description' => t('Whether or not this field will be rendered on the '.
+          'node edit and add forms.  Note: Nodes do not get assisgned a node '.
+          'id on the add form; therefore, any Rules that require the node to '.
+          'be available on button click will not function properly.'),
       );
       
       return $form;
@@ -389,22 +393,21 @@ function button_field_widget(&$form, &$form_state, $field, $items, $delta = 0) {
  */
 function _button_field_widget_html(&$form, &$form_state, $field, $items,
   $delta) {
-  // make sure we havea  node if
-  if (isset($form['nid']['#value'])) {
-    $element['value'] = array(
-      '#type' => 'button',
-      '#attributes' => array('class' => 'button_field'),
-      '#id' => $field['field_name'].'-'.$form['nid']['#value'],
-      '#value' => (isset($field['widget']['text'])
-        ? $field['widget']['text'] : $field['widget']['label']),
-      '#prefix' => '<div class="form-item">',
-      '#suffix' => '<div class="description">'.
-        (!empty($field['widget']['description']) ? $field['widget']['description']
-          : '').'</div></div>',
-    );
-    
-    return $element;
-  } // end if we have a node id
+  $name = $field['field_name'].'-'.(isset($form['nid']['#value'])
+    ? $form['nid']['#value'] : 0);
+  $element['value'] = array(
+    '#type' => 'button',
+    '#attributes' => array('class' => 'button_field'),
+    '#id' => $field['field_name'].'-'.$form['nid']['#value'],
+    '#value' => (isset($field['widget']['text'])
+      ? $field['widget']['text'] : $field['widget']['label']),
+    '#prefix' => '<div class="form-item">',
+    '#suffix' => '<div class="description">'.
+      (!empty($field['widget']['description']) ? $field['widget']['description']
+        : '').'</div></div>',
+  );
+  
+  return $element;
 } // end function _button_field_widget_html()
 
 /**
@@ -443,23 +446,21 @@ function _button_field_widget_html(&$form, &$form_state, $field, $items,
  */
 function _button_field_widget_image(&$form, &$form_state, $field, $items,
   $delta) {
-  // make sure we have a node id
-  if (isset($form['nid']['#value'])) {
-    $name = $field['field_name'].'-'.$form['nid']['#value'];
-    $element['value'] = array(
-      '#type' => 'item',
-      '#value' => '<img src="'.$field['widget']['image_path'].'" '.
-        'alt="'.$field['widget']['alt_text'].'" '.
-        'title="'.$field['widget']['title_text'].'" '.
-        'id="'.$name.'" name="'.$name.'" class="button_field" />'."\n",
-      '#prefix' => '<div class="form-item">',
-      '#suffix' => '<div class="description">'.
-        (!empty($field['widget']['description']) ? $field['widget']['description']
-          : '').'</div></div>',
-    ); // end $element
-    
-    return $element;
-  } // end if we have a node id
+  $name = $field['field_name'].'-'.(isset($form['nid']['#value'])
+    ? $form['nid']['#value'] : 0);
+  $element['value'] = array(
+    '#type' => 'item',
+    '#value' => '<img src="'.$field['widget']['image_path'].'" '.
+      'alt="'.$field['widget']['alt_text'].'" '.
+      'title="'.$field['widget']['title_text'].'" '.
+      'id="'.$name.'" name="'.$name.'" class="button_field" />'."\n",
+    '#prefix' => '<div class="form-item">',
+    '#suffix' => '<div class="description">'.
+      (!empty($field['widget']['description']) ? $field['widget']['description']
+        : '').'</div></div>',
+  ); // end $element
+  
+  return $element;
 } // end function _button_field_widget_image()
 
 /**
