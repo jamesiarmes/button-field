@@ -100,8 +100,8 @@ function button_field_field_settings($op, $field) {
   switch ($op) {
     case 'database columns':
       
-      $columns['value'] = array('type' => 'varchar', 'length' => '255',
-        'not null' => TRUE, 'sortable' => FALSE, 'views' => TRUE);
+      $columns['value'] = array('type' => 'int', 'size' => 'tiny',
+        'not null' => FALSE, 'sortable' => FALSE, 'views' => TRUE);
       return $columns;
       break;
     
