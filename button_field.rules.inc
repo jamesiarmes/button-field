@@ -15,7 +15,7 @@
  */
 function button_field_rules_event_info() {
   $items['button_field_clicked'] = array(
-    'label' => t('Users Clicks a Button'),
+    'label' => t('User Clicks a Button'),
     'module' => 'Button Field',
     'arguments' => array(
       'node' => array(
