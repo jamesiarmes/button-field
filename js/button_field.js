@@ -1,4 +1,3 @@
-// $Id$
 Drupal.behaviors.buttonFieldBehavior = function(context) {
   $('.button_field').bind('click', function() {
     $.ajax({

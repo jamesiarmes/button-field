@@ -1,4 +1,3 @@
-; $Id$
 name = Button Field
 description = Adds a button field type to CCK
 package = CCK
