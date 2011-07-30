@@ -118,8 +118,24 @@ function button_field_field_settings($op, $field) {
         '#type' => 'hidden',
         '#value' => NULL,
       ); // end $form['required']
+	  
+	  $form['confirmation'] = array(
+		'#type' => 'textfield',
+        '#title' => t('Confirmation message'),
+        '#default_value' => (isset($field['confirmation'])
+          ? $field['confirmation'] : FALSE),
+        '#description' => t('You may enter a confirmation message to be '.
+			'displayed to the user before running any rules. If you do not '.
+			'want the user to see a confirmation message you can leave this '.
+			'setting empty.'),
+	  ); // end $form['confirmation']
       
       return $form;
+      break;
+    
+    case 'save':
+      
+      return array('confirmation');
       break;
   } // end switch $op
 } // end function button_field_field_settings()
@@ -157,6 +173,10 @@ function theme_button_field_formatter_default($element) {
     '/js/button_field.js');
   drupal_add_css(drupal_get_path('module', 'button_field').
     '/css/button_field.css');
+  
+  // add the confirmation setting
+  $settings[$name] = array('confirmation' => $field['confirmation']);
+  drupal_add_js($settings, 'setting');
   
   // determine the widget type
   switch ($field['widget']['type']) {
