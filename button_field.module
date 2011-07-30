@@ -147,7 +147,7 @@ function button_field_field_formatter_info() {
  */
 function theme_button_field_formatter_default($element) {
   $node = $element['#node'];
-  $field = content_fields($element['#field_name']);
+  $field = content_fields($element['#field_name'], $element['#type_name']);
   $name = $field['field_name'].'-'.$node->nid;
   $class = 'button_field'.(isset($field['widget']['additional_class'])
     ? ' '.$field['widget']['additional_class'] : '');
