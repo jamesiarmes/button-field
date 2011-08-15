@@ -1,5 +1,5 @@
 Drupal.behaviors.buttonFieldBehavior = function(context) {
-  $('.button_field').bind('click', function() {
+  $('.button_field', context).bind('click', function(e) {
     var id = $(this).attr('id'),
       process = true;
     
