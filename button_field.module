@@ -46,20 +46,6 @@ function button_field_callback() {
 } // end function button_field_callback()
 
 /**
- * Implementation of hook_field().
- */
-function button_field_field($op, $node, $field, &$node_field, $teaser, $page) {
-  // determine the current operation
-  switch ($op) {
-    case 'load':
-      
-      return array($field['field_name'] =>
-        array('items' => array($field['field_name'])));
-      break;
-  } // end switch $op
-} // end function button_field_field()
-
-/**
  * Implementation of hook_field_info().
  * 
  * @return array
