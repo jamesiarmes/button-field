@@ -14,7 +14,7 @@ function button_field_menu() {
   $items['button_field/callback'] = array(
     'description' => 'Callback used when a button field is clicked on',
     'page callback' => 'button_field_callback',
-    'access callback' => true,
+    'access callback' => TRUE,
     'type' => MENU_CALLBACK,
   ); // end $items
   
@@ -104,17 +104,17 @@ function button_field_field_settings($op, $field) {
         '#type' => 'hidden',
         '#value' => NULL,
       ); // end $form['required']
-	  
-	  $form['confirmation'] = array(
-		'#type' => 'textfield',
+      
+      $form['confirmation'] = array(
+        '#type' => 'textfield',
         '#title' => t('Confirmation message'),
         '#default_value' => (isset($field['confirmation'])
           ? $field['confirmation'] : FALSE),
-        '#description' => t('You may enter a confirmation message to be '.
-			'displayed to the user before running any rules. If you do not '.
-			'want the user to see a confirmation message you can leave this '.
-			'setting empty.'),
-	  ); // end $form['confirmation']
+        '#description' => t('You may enter a confirmation message to be ' .
+            'displayed to the user before running any rules. If you do not ' .
+            'want the user to see a confirmation message you can leave this ' .
+            'setting empty.'),
+      ); // end $form['confirmation']
       
       return $form;
       break;
@@ -150,14 +150,14 @@ function button_field_field_formatter_info() {
 function theme_button_field_formatter_default($element) {
   $node = $element['#node'];
   $field = content_fields($element['#field_name'], $element['#type_name']);
-  $name = $field['field_name'].'-'.$node->nid;
-  $class = 'button_field'.(isset($field['widget']['additional_class'])
-    ? ' '.$field['widget']['additional_class'] : '');
+  $name = $field['field_name'] . '-' . $node->nid;
+  $class = 'button_field' . (isset($field['widget']['additional_class'])
+    ? ' ' . $field['widget']['additional_class'] : '');
   
   // add the javascript and css files
-  drupal_add_js(drupal_get_path('module', 'button_field').
+  drupal_add_js(drupal_get_path('module', 'button_field') .
     '/js/button_field.js');
-  drupal_add_css(drupal_get_path('module', 'button_field').
+  drupal_add_css(drupal_get_path('module', 'button_field') .
     '/css/button_field.css');
   
   // add the confirmation setting
@@ -168,17 +168,18 @@ function theme_button_field_formatter_default($element) {
   switch ($field['widget']['type']) {
     case 'button_field_html':
       
-      $return_value = '<button id="'.$name.'" name="'.$name.'" '.
-        'class="'.$class.'">'.
-      $field['widget']['text'].'</button>'."\n";
+      $return_value = '<button id="' . $name . '" name="' . $name . '" ' .
+        'class="' . $class . '">' .
+      $field['widget']['text'] . '</button>' . "\n";
       break;
     
     case 'button_field_image':
       
-      $return_value = '<img src="'.$field['widget']['image_path'].'" '.
-        'alt="'.$field['widget']['alt_text'].'" '.
-        'title="'.$field['widget']['title_text'].'" '.
-        'id="'.$name.'" name="'.$name.'" class="'.$class.'" />'."\n";
+      $return_value = '<img src="' . $field['widget']['image_path'] . '" ' .
+        'alt="' . $field['widget']['alt_text'] . '" ' .
+        'title="' . $field['widget']['title_text'] . '" ' .
+        'id="' . $name . '" name="' . $name . '" class="' . $class . '" />' .
+            "\n";
       break;
   } // end switch $field['widget']['type']
   
@@ -232,9 +233,9 @@ function _button_field_widget_settings_common($op, $widget) {
         '#title' => t('Additional class'),
         '#default_value' => (isset($widget['additional_class'])
           ? $widget['additional_class'] : NULL),
-        '#description' => t('Optionally, specify a class to be applied to the '.
-          'element. All button field elements will always contain the '.
-          '"button_field" class. This option allows you to specify an '.
+        '#description' => t('Optionally, specify a class to be applied to ' .
+          'the element. All button field elements will always contain the ' .
+          '"button_field" class. This option allows you to specify an ' .
           'additional class for styling your elements.'),
       ); // end $form['additional_class']
       
@@ -243,10 +244,10 @@ function _button_field_widget_settings_common($op, $widget) {
         '#title' => t('Hide on edit form'),
         '#default_value' => (isset($widget['edit_hidden'])
           ? $widget['edit_hidden'] : TRUE),
-        '#description' => t('Whether or not this field will be rendered on the '.
-          'node edit and add forms.  Note: Nodes do not get assisgned a node '.
-          'id on the add form; therefore, any Rules that require the node to '.
-          'be available on button click will not function properly.'),
+        '#description' => t('Whether or not this field will be rendered on ' .
+          'the node edit and add forms.  Note: Nodes do not get assisgned a ' .
+          'node id on the add form; therefore, any Rules that require the ' .
+          'node to be available on button click will not function properly.'),
       ); // end $form['edit_hidden']
       
       return $form;
@@ -372,9 +373,9 @@ function _button_field_widget_settings_image($op, $widget) {
  */
 function button_field_widget(&$form, &$form_state, $field, $items, $delta = 0) {
   // add the javascript and css files
-  drupal_add_js(drupal_get_path('module', 'button_field').
+  drupal_add_js(drupal_get_path('module', 'button_field') .
     '/js/button_field.js');
-  drupal_add_css(drupal_get_path('module', 'button_field').
+  drupal_add_css(drupal_get_path('module', 'button_field') .
     '/css/button_field.css');
   
   // determine the widget type
@@ -433,21 +434,21 @@ function button_field_widget(&$form, &$form_state, $field, $items, $delta = 0) {
  */
 function _button_field_widget_html(&$form, &$form_state, $field, $items,
   $delta) {
-  $name = $field['field_name'].'-'.(isset($form['nid']['#value'])
+  $name = $field['field_name'] . '-' . (isset($form['nid']['#value'])
     ? $form['nid']['#value'] : 0);
-  $class = 'button_field'.(isset($field['widget']['additional_class'])
-    ? ' '.$field['widget']['additional_class'] : '');
+  $class = 'button_field' . (isset($field['widget']['additional_class'])
+    ? ' ' . $field['widget']['additional_class'] : '');
   
   $element['value'] = array(
     '#type' => 'button',
     '#attributes' => array('class' => $class),
-    '#id' => $field['field_name'].'-'.$form['nid']['#value'],
+    '#id' => $field['field_name'] . '-' . $form['nid']['#value'],
     '#value' => (isset($field['widget']['text'])
       ? $field['widget']['text'] : $field['widget']['label']),
     '#prefix' => '<div class="form-item">',
-    '#suffix' => '<div class="description">'.
+    '#suffix' => '<div class="description">' .
       (!empty($field['widget']['description']) ? $field['widget']['description']
-        : '').'</div></div>',
+        : '') . '</div></div>',
   ); // end $element['value']
   
   return $element;
@@ -489,29 +490,30 @@ function _button_field_widget_html(&$form, &$form_state, $field, $items,
  */
 function _button_field_widget_image(&$form, &$form_state, $field, $items,
   $delta) {
-  $name = $field['field_name'].'-'.(isset($form['nid']['#value'])
+  $name = $field['field_name'] . '-' . (isset($form['nid']['#value'])
     ? $form['nid']['#value'] : 0);
-  $class = 'button_field'.(isset($field['widget']['additional_class'])
-    ? ' '.$field['widget']['additional_class'] : '');
+  $class = 'button_field' . (isset($field['widget']['additional_class'])
+    ? ' ' . $field['widget']['additional_class'] : '');
   
   $element['value'] = array(
     '#type' => 'item',
-    '#value' => '<img src="'.$field['widget']['image_path'].'" '.
-      'alt="'.$field['widget']['alt_text'].'" '.
-      'title="'.$field['widget']['title_text'].'" '.
-      'id="'.$name.'" name="'.$name.'" class="'.$class.'" />'."\n",
+    '#value' => '<img src="' . $field['widget']['image_path'] . '" ' .
+      'alt="' . $field['widget']['alt_text'] . '" ' .
+      'title="' . $field['widget']['title_text'] . '" ' .
+      'id="' . $name . '" name="' . $name . '" class="' . $class . '" />' .
+      "\n",
     '#prefix' => '<div class="form-item">',
-    '#suffix' => '<div class="description">'.
+    '#suffix' => '<div class="description">' .
       (!empty($field['widget']['description']) ? $field['widget']['description']
-        : '').'</div></div>',
+        : '') . '</div></div>',
   ); // end $element['value']
   
   return $element;
 } // end function _button_field_widget_image()
 
 /**
-* Implementation of hook_theme().
-*/
+ * Implementation of hook_theme().
+ */
 function button_field_theme() {
   return array(
     'button_field_formatter_default' => array(

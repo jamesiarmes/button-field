@@ -52,8 +52,8 @@ function button_field_update_6100() {
   $ret = array();
   $columns['value'] = array('type' => 'varchar', 'length' => '255',
     'not null' => TRUE, 'sortable' => FALSE, 'views' => TRUE);
-  $ret[] = update_sql('UPDATE {content_node_field} SET db_columns = '.
-    '\''.serialize($columns).'\' WHERE type = \'button_field\'');
+  $ret[] = update_sql('UPDATE {content_node_field} SET db_columns = ' .
+    '\'' . serialize($columns) . '\' WHERE type = \'button_field\'');
   
   return $ret;
 } // end function button_field_update_6100()
@@ -76,7 +76,7 @@ function button_field_update_6101() {
   
   // start by getting all of the button fields
   $ret = array();
-  $field_result = db_query('SELECT field_name FROM {content_node_field} '.
+  $field_result = db_query('SELECT field_name FROM {content_node_field} ' .
     'WHERE type = \'%s\'', 'button_field');
   
   // iterate over each of the fields
@@ -84,15 +84,15 @@ function button_field_update_6101() {
   while ($field !== FALSE) {
     // get the instances for this field
     $instance_result =
-      db_query('SELECT type_name FROM {content_node_field_instance} '.
+      db_query('SELECT type_name FROM {content_node_field_instance} ' .
         'WHERE field_name = \'%s\'', $field['field_name']);
     
     // iterate over each of the instances, create the appropriate column
-    $column = $field['field_name'].'_value';
+    $column = $field['field_name'] . '_value';
     $instance = db_fetch_array($instance_result);
     while ($instance !== FALSE) {
       // check to see if the column already exists
-      $table = 'content_type_'.$instance['type_name'];
+      $table = 'content_type_' . $instance['type_name'];
       if (db_column_exists($table, $column)) {
         // we want to drop the column because we're changing its type
         db_drop_field($ret, $table, $column);

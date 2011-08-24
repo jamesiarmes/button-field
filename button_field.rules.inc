@@ -74,7 +74,7 @@ function button_field_action_reload() {
   // redirect to the current page
   $_REQUEST['destination'] = $_REQUEST['path'];
   
-  return true;
+  return TRUE;
 } // end function button_field_action_reload()
 
 /**
@@ -85,7 +85,7 @@ function button_field_action_reload() {
  * @return boolean
  */
 function button_field_condition_button_is($button_name, $arguemnts, $settings,
-	$variables) {
+  $variables) {
   $id = $_REQUEST['id'];
   list($field_name, $nid) = explode('-', $id);
   
