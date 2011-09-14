@@ -1,6 +1,6 @@
 name = Button Field
-description = Adds a button field type to CCK
-package = CCK
-core = 6.x
-dependencies[] = content
+description = Adds a button field type
+package = Fields
+core = 7.x
+dependencies[] = field
 dependencies[] = rules
