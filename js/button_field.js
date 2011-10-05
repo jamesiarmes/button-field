@@ -11,11 +11,12 @@ Drupal.behaviors.buttonFieldBehavior = function(context) {
     // if we should process the rules for this button then do so now
     if (process) {
       $.ajax({
-        url: Drupal.settings.basePath+'button_field/callback',
+        url: Drupal.settings.basePath,
         dataType: 'json',
         data: {
-           id: $(this).attr('id'),
-           path: location.pathname
+          q: 'button_field/callback',
+          id: $(this).attr('id'),
+          path: location.pathname
         },
         success: function(data) {
           if (data.redirect) {
