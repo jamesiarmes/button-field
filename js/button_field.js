@@ -17,7 +17,9 @@ Drupal.behaviors.buttonFieldBehavior = {
           dataType: 'json',
           data: {
             id: $(this).attr('id'),
-            path: location.pathname
+            path: location.pathname,
+            entity_id: Drupal.settings[id].entity_id,
+            entity_type: Drupal.settings[id].entity_type
           },
           success: function(data) {
             if (data.redirect) {
