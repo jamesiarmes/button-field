@@ -6,7 +6,28 @@
  */
 
 /**
- * Implementation of hook_field_info().
+ * Implements hook_menu().
+ */
+function button_field_menu() {
+  $items['button_field/callback'] = array(
+    'description' => 'Callback used when a button field is clicked on',
+    'page callback' => 'button_field_callback',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  ); // end $items
+
+  return $items;
+} // end function button_field_menu()
+
+/**
+ * Callback function for ajax calls when button is clicked.
+ */
+function button_field_callback() {
+  // TODO: implement
+} // end function button_field_callback()
+
+/**
+ * Implements hook_field_info().
  */
 function button_field_field_info() {
   return array(
@@ -21,7 +42,7 @@ function button_field_field_info() {
 } // end function button_field_field_info()
 
 /**
- * Implementation of hook_field_schema().
+ * Implements hook_field_schema().
  */
 function button_field_field_schema($field) {
   return array(
@@ -39,14 +60,14 @@ function button_field_field_schema($field) {
 } // end function button_field_field_schema()
 
 /**
- * Implementation of hook_field_is_empty().
-*/
+ * Implements hook_field_is_empty().
+ */
 function button_field_field_is_empty($item, $field) {
   return TRUE;
 } // end function button_field_content_is_empty()
 
 /**
- * Implementation of hook_field_formatter_info().
+ * Implements hook_field_formatter_info().
  */
 function button_field_field_formatter_info() {
   return array(
@@ -58,24 +79,24 @@ function button_field_field_formatter_info() {
 } // end function button_field_field_formatter_info()
 
 /**
- * Implementation of hook_field_formatter_view().
+ * Implements hook_field_formatter_view().
  */
 function button_field_field_formatter_view($entity_type, $entity, $field,
   $instance, $langcode, $items, $display) {
   $element = array('value' => array());
 
-  // TODO: Determine the entity id (eid)
-  $eid = NULL;
+  $ids = entity_extract_ids($entity_type, $entity);
+  $entity_id = $ids[0];
 
   switch ($instance['widget']['type']) {
     case 'button_field_html':
 
-      $element = _button_field_widget_html($eid, $field, $instance, $element);
+      $element = _button_field_widget_html($field, $instance, $element, $entity_type, $entity_id);
       break;
 
     case 'button_field_image':
 
-      $element = _button_field_widget_image($eid, $field, $instance, $element);
+      $element = _button_field_widget_image($field, $instance, $element, $entity_type, $entity_id);
       break;
   } // end switch $instance['widget']['type']
 
@@ -83,7 +104,7 @@ function button_field_field_formatter_view($entity_type, $entity, $field,
 } // end function button_field_field_formatter_view()
 
 /**
- * Implementation of hook_field_widget_info().
+ * Implements hook_field_widget_info().
  */
 function button_field_field_widget_info() {
   return array(
@@ -99,7 +120,7 @@ function button_field_field_widget_info() {
 } // end function button_field_field_widget_info()
 
 /**
- * Implementation of hook_field_settings_form().
+ * Implements hook_field_settings_form().
  */
 function button_field_field_settings_form($field, $instance, $has_data) {
   return array(
@@ -117,7 +138,7 @@ function button_field_field_settings_form($field, $instance, $has_data) {
 } // end function button_field_field_settings_form()
 
 /**
- * Implementation of hook_field_widget_settings_form().
+ * Implements hook_field_widget_settings_form().
  */
 function button_field_field_widget_settings_form($field, $instance) {
   $form = array(
@@ -187,7 +208,7 @@ function button_field_field_widget_settings_form($field, $instance) {
 } // end function button_field_field_widget_settings_form()
 
 /**
- * Implemenation of hook_form_FORM_ID_alter().
+ * Implements hook_form_FORM_ID_alter().
  *
  * Hides the required and cardinality fields and removes the default value from
  * the field_ui_field_edit_form because it does not apply to this field type.
@@ -209,7 +230,7 @@ function button_field_form_field_ui_field_edit_form_alter(&$form, &$form_state,
 } // end function button_field_form_field_ui_field_edit_form_alter()
 
 /**
- * Implementation of hok_field_widget_form().
+ * Implements hook_field_widget_form().
  */
 function button_field_field_widget_form(&$form, &$form_state, $field, $instance,
   $langcode, $items, $delta, $element) {
@@ -218,6 +239,11 @@ function button_field_field_widget_form(&$form, &$form_state, $field, $instance,
       '/js/button_field.js');
   drupal_add_css(drupal_get_path('module', 'button_field') .
       '/css/button_field.css');
+  
+  $entity_type = $element['#entity_type'];
+  $entity = $form_state[$entity_type];
+  $ids = entity_extract_ids($entity_type, $entity);
+  $entity_id = $ids[0];
 
   // TODO: Determine the entity id (eid)
   $eid = NULL;
@@ -227,14 +253,14 @@ function button_field_field_widget_form(&$form, &$form_state, $field, $instance,
 
       return ($instance['widget']['settings']['edit_hidden']
         ? array()
-        : _button_field_widget_html($eid, $field, $instance, $element));
+        : _button_field_widget_html($field, $instance, $element, $entity_type, $entity_id));
       break;
 
     case 'button_field_image':
 
       return ($instance['widget']['settings']['edit_hidden']
         ? array()
-        : _button_field_widget_image($eid, $field, $instance, $element));
+        : _button_field_widget_image($field, $instance, $element, $entity_type, $entity_id));
       break;
   } // end switch $instance['widget']['type']
 
@@ -244,31 +270,31 @@ function button_field_field_widget_form(&$form, &$form_state, $field, $instance,
 /**
  * Builds the renderable array for an HTML button field widget.
  *
- * @param $eid
- *   Entity id that the field is being rendered on
  * @param $field
  * @param $instance
  * @param $element
  */
-function _button_field_widget_html($eid, $field, $instance, $element) {
-  $name = $field['field_name'] . '-' . (!empty($eid) ? $eid : 0);
-
-  $classes = array('button_field');
-  if (isset($instance['widget']['additional_class'])) {
-    $classes = array_merge($classes, explode(' ', $instance['widget']['additional_class']));
+function _button_field_widget_html($field, $instance, $element, $entity_type, $entity_id) {
+  $class = array('button_field');
+  if (isset($instance['additional_class'])) {
+    $class = array_merge($classes, explode(' ', $instance['additional_class']));
   }
 
   $element['value'] = array(
     '#type' => 'button',
-    '#attributes' => array('class' => $classes),
-    '#id' => $name,
+    '#attributes' => array(
+      'class' => $class,
+      'data-entity-type' => $entity_type,
+      'data-entity-id' => $entity_id,
+    ),
     '#value' => (isset($instance['widget']['settings']['text'])
       ? $instance['widget']['settings']['text'] : $instance['label']),
-    '#prefix' => '<div class="form-item">',
+    // Button elements do not obey the #description index, so we need to add
+    // our own suffix here.
     '#suffix' => '<div class="description">' .
-      (!empty($instance['widget']['description'])
-        ? $instance['widget']['description']
-        : '') . '</div></div>',
+      (!empty($instance['description'])
+        ? $instance['description']
+        : '') . '</div>',
   ); // end $element['value']
 
   return $element;
@@ -277,33 +303,12 @@ function _button_field_widget_html($eid, $field, $instance, $element) {
 /**
  * Builds the renderable array for an image button field widget.
  *
- * @param $eid
- *   Entity id that the field is being rendered on
+ * @param $name
+ *   Name for the field element
  * @param $field
  * @param $instance
  * @param $element
  */
-function _button_field_widget_image($eid, $field, $instance, $element) {
-  $name = $field['field_name'] . '-' . (!empty($eid) ? $eid : 0);
-
-  $classes = array('button_field');
-  if (isset($instance['widget']['additional_class'])) {
-    $classes = array_merge($classes, explode(' ', $instance['widget']['additional_class']));
-  }
-
-  $element['value'] = array(
-    '#type' => 'item',
-    '#value' => '<img src="' . $instance['widget']['settings']['image_path'] . '" ' .
-      'alt="' . $instance['widget']['settings']['alt_text'] . '" ' .
-      'title="' . $instance['widget']['settings']['title_text'] . '" ' .
-      'id="' . $name . '" name="' . $name . '" class="' . implode(' ', $classes) . '" />' .
-      "\n",
-    '#prefix' => '<div class="form-item">',
-    '#suffix' => '<div class="description">' .
-      (!empty($instance['widget']['description'])
-        ? $instance['widget']['description']
-        : '') . '</div></div>',
-  ); // end $element['value']
-
-  return $element;
+function _button_field_widget_image($field, $instance, $element, $entity_type, $entity_id) {
+  // TODO: implement
 } // end function _button_field_widget_image()
