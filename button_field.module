@@ -23,8 +23,11 @@ function button_field_menu() {
  * Callback function for ajax calls when button is clicked.
  */
 function button_field_callback() {
-  // TODO: implement
-  echo 'hello there';
+  $entity = entity_load_single($_REQUEST['entity_type'], $_REQUEST['entity_id']);
+  $field = field_read_field($_REQUEST['field_name']);
+  rules_invoke_all('button_field_clicked', $field, $entity);
+
+  // TODO: handle the response
 } // end function button_field_callback()
 
 /**
@@ -96,9 +99,10 @@ function button_field_field_formatter_view($entity_type, $entity, $field,
   $entity_id = $ids[0];
   
   $settings[$id] = array(
-    'entity_type' => $entity_type,
-    'entity_id' => $entity_id,
     'confirmation' => $field['settings']['confirmation'],
+    'entity_id' => $entity_id,
+    'entity_type' => $entity_type,
+    'field_name' => $field['field_name'],
   );
   drupal_add_js($settings, 'setting');
 
@@ -266,9 +270,10 @@ function button_field_field_widget_form(&$form, &$form_state, $field, $instance,
   }
 
   $settings[$id] = array(
-    'entity_type' => $entity_type,
-    'entity_id' => $entity_id,
     'confirmation' => $field['settings']['confirmation'],
+    'entity_id' => $entity_id,
+    'entity_type' => $entity_type,
+    'field_name' => $field['field_name'],
   );
   drupal_add_js($settings, 'setting');
 
