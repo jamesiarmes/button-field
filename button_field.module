@@ -21,13 +21,22 @@ function button_field_menu() {
 
 /**
  * Callback function for ajax calls when button is clicked.
+ *
+ * @todo See if we can make use of Drupal's ajax commands
  */
 function button_field_callback() {
   $entity = entity_load_single($_REQUEST['entity_type'], $_REQUEST['entity_id']);
   $field = field_read_field($_REQUEST['field_name']);
   rules_invoke_all('button_field_clicked', $field, $entity);
 
-  // TODO: handle the response
+  // check to see if we have a page to redirect to
+  $return_array = array();
+  if (isset($_REQUEST['destination']) && !empty($_REQUEST['destination'])) {
+    $return_array['redirect'] = urldecode($_REQUEST['destination']);
+  } // end if we have a page to redirect to
+
+  echo json_encode($return_array);
+  exit;
 } // end function button_field_callback()
 
 /**
