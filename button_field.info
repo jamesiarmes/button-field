@@ -4,3 +4,6 @@ package = Fields
 core = 7.x
 dependencies[] = field
 dependencies[] = rules
+
+; Views handlers
+files[] = includes/views/handlers/button_field_handler_field.inc

@@ -6,6 +6,16 @@
  */
 
 /**
+ * Implements button_field_views_api().
+ */
+function button_field_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'button_field') . '/includes/views',
+  );
+}
+
+/**
  * Implements hook_menu().
  */
 function button_field_menu() {
