@@ -109,7 +109,6 @@ function button_field_field_formatter_view($entity_type, $entity, $field,
   // Add the javascript and css files.
   $path = drupal_get_path('module', 'button_field');
   drupal_add_js($path . '/js/button_field.js');
-  drupal_add_css($path . '/css/button_field.css');
 
   $id = _button_field_build_id($field, 'view', 0, $langcode);
 
@@ -275,7 +274,6 @@ function button_field_field_widget_form(&$form, &$form_state, $field, $instance,
   // Add the javascript and css files
   $path = drupal_get_path('module', 'button_field');
   drupal_add_js($path . '/js/button_field.js');
-  drupal_add_css($path . '/css/button_field.css');
 
   $id = _button_field_build_id($field, 'edit', $delta, $langcode);
 
