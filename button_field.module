@@ -12,21 +12,21 @@ function button_field_views_api() {
   return array(
     'api' => 3,
     'path' => drupal_get_path('module', 'button_field') . '/includes/views',
-  );
-}
+  ); // end return
+} // end button_field_views_api()
 
 /**
  * Implements hook_menu().
  */
 function button_field_menu() {
-  $items['button_field/callback'] = array(
-    'description' => 'Callback used when a button field is clicked on',
-    'page callback' => 'button_field_callback',
-    'access callback' => TRUE,
-    'type' => MENU_CALLBACK,
-  ); // end $items
-
-  return $items;
+  return array(
+  	'button_field/callback' => array(
+      'description' => 'Callback used when a button field is clicked on',
+      'page callback' => 'button_field_callback',
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+    ),
+  ); // end return
 } // end function button_field_menu()
 
 /**
@@ -39,7 +39,7 @@ function button_field_callback() {
   $field = field_read_field($_REQUEST['field_name']);
   rules_invoke_all('button_field_clicked', $field, $entity);
 
-  // check to see if we have a page to redirect to
+  // Check to see if we have a page to redirect to.
   $return_array = array();
   if (isset($_REQUEST['destination']) && !empty($_REQUEST['destination'])) {
     $return_array['redirect'] = urldecode($_REQUEST['destination']);
@@ -106,23 +106,22 @@ function button_field_field_formatter_info() {
  */
 function button_field_field_formatter_view($entity_type, $entity, $field,
   $instance, $langcode, $items, $display) {
-  // add the javascript and css files
-  drupal_add_js(drupal_get_path('module', 'button_field') .
-        '/js/button_field.js');
-  drupal_add_css(drupal_get_path('module', 'button_field') .
-        '/css/button_field.css');
+  // Add the javascript and css files.
+  $path = drupal_get_path('module', 'button_field');
+  drupal_add_js($path . '/js/button_field.js');
+  drupal_add_css($path . '/css/button_field.css');
 
   $id = _button_field_build_id($field, 'view', 0, $langcode);
 
   $ids = entity_extract_ids($entity_type, $entity);
   $entity_id = $ids[0];
-  
+
   $settings[$id] = array(
     'confirmation' => $field['settings']['confirmation'],
     'entity_id' => $entity_id,
     'entity_type' => $entity_type,
     'field_name' => $field['field_name'],
-  );
+  ); // end $setting[$id}
   drupal_add_js($settings, 'setting');
 
   $element = array('value' => array());
@@ -240,6 +239,7 @@ function button_field_field_widget_settings_form($field, $instance) {
           ? $widget['settings']['title_text'] : $instance['label']),
         '#required' => FALSE,
       ); // end $widget_settings['title_text']
+      break;
   } // end switch $instance['widget']['type']
 
   return array_merge($widget_settings, $form);
@@ -272,14 +272,13 @@ function button_field_form_field_ui_field_edit_form_alter(&$form, &$form_state,
  */
 function button_field_field_widget_form(&$form, &$form_state, $field, $instance,
   $langcode, $items, $delta, $element) {
-  // add the javascript and css files
-  drupal_add_js(drupal_get_path('module', 'button_field') .
-      '/js/button_field.js');
-  drupal_add_css(drupal_get_path('module', 'button_field') .
-      '/css/button_field.css');
-  
+  // Add the javascript and css files
+  $path = drupal_get_path('module', 'button_field');
+  drupal_add_js($path . '/js/button_field.js');
+  drupal_add_css($path . '/css/button_field.css');
+
   $id = _button_field_build_id($field, 'edit', $delta, $langcode);
-  
+
   $entity_type = $element['#entity_type'];
   $entity_id = NULL;
   if (isset($form_state[$entity_type])) {
@@ -293,7 +292,7 @@ function button_field_field_widget_form(&$form, &$form_state, $field, $instance,
     'entity_id' => $entity_id,
     'entity_type' => $entity_type,
     'field_name' => $field['field_name'],
-  );
+  ); // end $settings[$id]
   drupal_add_js($settings, 'setting');
 
   switch ($instance['widget']['type']) {
@@ -318,6 +317,8 @@ function button_field_field_widget_form(&$form, &$form_state, $field, $instance,
 /**
  * Builds the renderable array for an HTML button field widget.
  *
+ * @param $id
+ *   Id for the field element
  * @param $field
  * @param $instance
  * @param $element
@@ -349,8 +350,8 @@ function _button_field_widget_html($id, $field, $instance, $element) {
 /**
  * Builds the renderable array for an image button field widget.
  *
- * @param $name
- *   Name for the field element
+ * @param $id
+ *   Id for the field element
  * @param $field
  * @param $instance
  * @param $element
@@ -401,7 +402,7 @@ function _button_field_build_id($field, $mode = 'edit', $delta = 0, $language = 
     $language,
     $delta,
     'value',
-  );
+  ); // end $parts
 
   return implode('-', $parts);
 } // end function _button_field_build_id()
