@@ -110,7 +110,8 @@ function button_field_field_formatter_view($entity_type, $entity, $field,
   $path = drupal_get_path('module', 'button_field');
   drupal_add_js($path . '/js/button_field.js');
 
-  $id = _button_field_build_id($field, 'view', 0, $langcode);
+  $delta = (isset($display['views_row_id']) ? $display['views_row_id'] : 0);
+  $id = _button_field_build_id($field, 'view', $delta, $langcode);
 
   $ids = entity_extract_ids($entity_type, $entity);
   $entity_id = $ids[0];

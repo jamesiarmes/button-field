@@ -12,6 +12,10 @@ class button_field_handler_field extends views_handler_field_field {
       'type' => $this->options['type'],
       'settings' => $this->options['settings'],
       'label' => 'hidden',
+      // Pass the View object in the display so that fields can act on it.
+      'views_view' => $this->view,
+      'views_field' => $this,
+      'views_row_id' => $row_id,
     ); // end $display
 
     // Get the entity and type that we will render the field about.
