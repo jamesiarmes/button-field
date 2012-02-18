@@ -112,3 +112,23 @@ function _button_field_options_list() {
 
   return $fields;
 } // end function _button_field_options_list()
+
+/**
+ * Implements hook_rules_action_base_upgrade_map_name().
+ *
+ * Returns the approproate name for the Drupal 7 version of the button_is
+ * condition.
+ */
+function button_field_condition_button_is_upgrade_map_name($element) {
+  return 'button_field_compare_button';
+}
+
+/**
+ * Implements hook_rules_action_base_upgrade().
+ *
+ * Upgrade path for button_is conditions from Drupal 6 to 7.
+ */
+function button_field_condition_button_is_upgrade($element, RulesPlugin $target) {
+  $target->settings['clicked_field:select'] = 'field';
+  $target->settings['comparison_field_name'] = $element['#settings']['button_name'];
+}
