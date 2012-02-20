@@ -124,20 +124,7 @@ function button_field_field_formatter_view($entity_type, $entity, $field,
   ); // end $setting[$id}
   drupal_add_js($settings, 'setting');
 
-  $element = array('value' => array());
-  switch ($instance['widget']['type']) {
-    case 'button_field_html':
-
-      $element = _button_field_widget_html($id, $field, $instance, $element);
-      break;
-
-    case 'button_field_image':
-
-      $element = _button_field_widget_image($id, $field, $instance, $element);
-      break;
-  } // end switch $instance['widget']['type']
-
-  return $element['value'];
+  return _button_field_build_element($id, $instance);
 } // end function button_field_field_formatter_view()
 
 /**
@@ -294,44 +281,31 @@ function button_field_field_widget_form(&$form, &$form_state, $field, $instance,
   ); // end $settings[$id]
   drupal_add_js($settings, 'setting');
 
-  switch ($instance['widget']['type']) {
-    case 'button_field_html':
-
-      return ($instance['widget']['settings']['edit_hidden']
-        ? array()
-        : _button_field_widget_html($id, $field, $instance, $element));
-      break;
-
-    case 'button_field_image':
-
-      return ($instance['widget']['settings']['edit_hidden']
-        ? array()
-        : _button_field_widget_image($id, $field, $instance, $element));
-      break;
-  } // end switch $instance['widget']['type']
+  // If this field is not to be hidden on the edit form then build the element.
+  if (!$instance['widget']['settings']['edit_hidden']) {
+    $element = _button_field_build_element($id, $instance);
+  }
 
   return $element;
 } // end function button_field_field_widget_form()
 
 /**
- * Builds the renderable array for an HTML button field widget.
+ * Builds the renderable array for a button field widget.
  *
- * @param $id
- *   Id for the field element
- * @param $field
- * @param $instance
- * @param $element
+ * @param string $id
+ *   Id for the field element.
+ * @param array $instance
+ *   The instance of the field being rendered.
  */
-function _button_field_widget_html($id, $field, $instance, $element) {
+function _button_field_build_element($id, $instance) {
   $class = array('button_field');
   if (isset($instance['additional_class'])) {
     $class = array_merge($classes, explode(' ', $instance['additional_class']));
   }
 
-  $element['value'] = array(
+  $element = array(
     '#type' => 'button',
     '#id' => $id,
-    '#name' => $id,
     '#attributes' => array('class' => $class),
     '#value' => (isset($instance['widget']['settings']['text'])
       ? $instance['widget']['settings']['text'] : $instance['label']),
@@ -343,42 +317,15 @@ function _button_field_widget_html($id, $field, $instance, $element) {
         : '') . '</div>',
   ); // end $element['value']
 
-  return $element;
-} // end function _button_field_widget_html()
-
-/**
- * Builds the renderable array for an image button field widget.
- *
- * @param $id
- *   Id for the field element
- * @param $field
- * @param $instance
- * @param $element
- */
-function _button_field_widget_image($id, $field, $instance, $element) {
-  $class = array('button_field');
-  if (isset($instance['additional_class'])) {
-    $class = array_merge($classes, explode(' ', $instance['additional_class']));
+  // If this is an image button then we need to set the type appropriatly as
+  // well as the image source.
+  if ('button_field_image' == $instance['widget']['type']) {
+    $element['#type'] = 'image_button';
+    $element['#src'] = $instance['widget']['settings']['image_path'];
   }
 
-  $element['value'] = array(
-    '#type' => 'image_button',
-    '#id' => $id,
-    '#name' => $id,
-    '#attributes' => array('class' => $class),
-    // Button elements do not obey the #description index, so we need to add
-    // our own suffix here.
-    '#suffix' => '<div class="description">' .
-      (!empty($instance['description'])
-        ? $instance['description']
-        : '') . '</div>',
-    '#src' => $instance['widget']['settings']['image_path'],
-    '#value' => (isset($instance['widget']['settings']['text'])
-      ? $instance['widget']['settings']['text'] : $instance['label']),
-  ); // end $element['value']
-
   return $element;
-} // end function _button_field_widget_image()
+} // end function _button_field_build_element()
 
 /**
  * Builds the id for a button field instance.
