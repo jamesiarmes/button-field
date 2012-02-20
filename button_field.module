@@ -37,7 +37,8 @@ function button_field_menu() {
 function button_field_callback() {
   $entity = entity_load_single($_REQUEST['entity_type'], $_REQUEST['entity_id']);
   $field = field_read_field($_REQUEST['field_name']);
-  rules_invoke_all('button_field_clicked', $field, $entity);
+  $entity_wrapper = entity_metadata_wrapper($_REQUEST['entity_type'], $entity);
+  rules_invoke_all('button_field_clicked', $field, $entity_wrapper);
 
   // Check to see if we have a page to redirect to.
   $return_array = array();
