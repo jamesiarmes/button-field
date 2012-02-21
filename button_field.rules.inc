@@ -80,7 +80,7 @@ function button_field_rules_event_info() {
  */
 function button_field_action_reload() {
   // redirect to the current page
-  $_REQUEST['destination'] = $_REQUEST['path'];
+  $_REQUEST['destination'] = $_SERVER['HTTP_REFERER'];
 } // end function button_field_action_reload()
 
 /**
