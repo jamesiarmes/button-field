@@ -40,15 +40,82 @@ function button_field_callback() {
   $entity_wrapper = entity_metadata_wrapper($_REQUEST['entity_type'], $entity);
   rules_invoke_all('button_field_clicked', $field, $entity_wrapper);
 
-  // Check to see if we have a page to redirect to.
+  // Check to see if a page redirect action was used.
   $return_array = array();
-  if (isset($_REQUEST['destination']) && !empty($_REQUEST['destination'])) {
-    $return_array['redirect'] = urldecode($_REQUEST['destination']);
-  } // end if we have a page to redirect to
+  $url = NULL;
+  $force = FALSE;
+  if (isset($GLOBALS['_rules_action_drupal_goto_do'])) {
+    list($url, $force) = $GLOBALS['_rules_action_drupal_goto_do'];
+  } // end if a page redirect action was used
+  
+  // Check to see if we have a destination set and we are not forced to use a
+  // redirect action.
+  if (!$force && isset($_REQUEST['destination']) && !empty($_REQUEST['destination'])) {
+    $url = urldecode($_REQUEST['destination']);
+  } // end if we have a destination
+  
+  // If we have a url that we need to set the location to, set the redirect to
+  // the url.
+  if (!empty($url)) {
+    $return_array['redirect'] = $url;
+  } // end if we have a url to set the location to
 
   echo json_encode($return_array);
   exit;
 } // end function button_field_callback()
+
+/**
+ * Callback function for the FAPI ajax framework, used on edit forms.
+ */
+function button_field_callback_ajax(&$form, &$form_state) {
+  // Get the field that was clicked.
+  $language = $form['language']['#value'];
+  $field_name = $form_state['triggering_element']['#array_parents'][0];
+  $field = $form_state['field'][$field_name][$language]['field'];
+
+  // Get the entity and type.
+  $entity_type = $form[$field_name][$language][0]['#entity_type'];
+  $entity = &$form[$field_name][$language][0]['#entity'];
+
+  // Trigger the rules event.
+  $entity_wrapper = entity_metadata_wrapper($entity_type, $entity);
+  rules_invoke_all('button_field_clicked', $field, $entity_wrapper);
+
+  // Check to see if a page redirect action was used.
+  $commands = array();
+  $url = NULL;
+  $force = FALSE;
+  if (isset($GLOBALS['_rules_action_drupal_goto_do'])) {
+    list($url, $force) = $GLOBALS['_rules_action_drupal_goto_do'];
+  } // end if a page redirect action was used
+
+  // Check to see if we have a destination set and we are not forced to use a
+  // redirect action.
+  if (!$force && isset($_REQUEST['destination']) && !empty($_REQUEST['destination'])) {
+    $url = urldecode($_REQUEST['destination']);
+  } // end if we have a destination
+
+  // If we have a url that we need to set the location to, get an ajax location
+  // command to that url.
+  if (!empty($url)) {
+    $commands[] = button_field_ajax_command_location($url);
+  } // end if we have a url to set the location to
+
+  return array('#type' => 'ajax', '#commands' => $commands);
+} // end function button_field_callback_ajax()
+
+/**
+ * Creates a Drupal Ajax buttonFieldLocation command.
+ *
+ * @param string $url
+ *   New location for the page
+ */
+function button_field_ajax_command_location($url) {
+  return array(
+    'command' => 'buttonFieldLocation',
+    'url' => $url,
+  );
+}
 
 /**
  * Implements hook_field_info().
@@ -254,26 +321,27 @@ function button_field_form_field_ui_field_edit_form_alter(&$form, &$form_state,
  */
 function button_field_field_widget_form(&$form, &$form_state, $field, $instance,
   $langcode, $items, $delta, $element) {
-  // Add the javascript file
-  $path = drupal_get_path('module', 'button_field');
-  drupal_add_js($path . '/js/button_field.js');
+  // If this field is to be hidden on the edit form then we have nothing to do.
+  if ($instance['widget']['settings']['edit_hidden']) {
+    return $element;
+  } // end if this field is to be hidden
 
   $entity_type = $element['#entity_type'];
-  $entity_id = NULL;
+  $entity_id = $entity = NULL;
   if (isset($form_state[$entity_type])) {
-    $entity = $form_state[$entity_type];
+    $entity = &$form_state[$entity_type];
     $ids = entity_extract_ids($entity_type, $entity);
     $entity_id = $ids[0];
   }
 
-  // Build the field element id and the javascript settings for the field
   $id = _button_field_build_id($field, 'edit', $delta, $langcode);
- _button_field_build_settings($id, $field, $entity_type, $entity_id);
+  $element = _button_field_build_element($id, $instance);
 
-  // If this field is not to be hidden on the edit form then build the element.
-  if (!$instance['widget']['settings']['edit_hidden']) {
-    $element = _button_field_build_element($id, $instance);
-  }
+  $element['#entity_type'] = $entity_type;
+  $element['#entity'] = &$entity;
+  $element['#ajax'] = array(
+    'callback' => 'button_field_callback_ajax',
+  );
 
   return $element;
 } // end function button_field_field_widget_form()
@@ -304,14 +372,14 @@ function _button_field_build_element($id, $instance) {
       (!empty($instance['description'])
         ? $instance['description']
         : '') . '</div>',
-  ); // end $element['value']
+  ); // end $element
 
   // If this is an image button then we need to set the type appropriatly as
   // well as the image source.
   if ('button_field_image' == $instance['widget']['type']) {
     $element['#type'] = 'image_button';
     $element['#src'] = $instance['widget']['settings']['image_path'];
-  }
+  } // end if this is an image button
 
   return $element;
 } // end function _button_field_build_element()
