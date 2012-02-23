@@ -16,21 +16,6 @@ function button_field_views_api() {
 } // end button_field_views_api()
 
 /**
- * Implements hook_menu().
- */
-function button_field_menu() {
-  return array(
-  	'button_field/callback' => array(
-      'description' => 'Callback used when a button field is clicked on',
-      'page callback' => 'button_field_callback',
-      'access callback' => TRUE,
-      'type' => MENU_CALLBACK,
-      'delivery callback' => 'ajax_deliver',
-    ),
-  ); // end return
-} // end function button_field_menu()
-
-/**
  * Form builder callback for the dummy form used to render button field's on a
  * display that is not editable.
  */
@@ -51,20 +36,6 @@ function button_field_dummy_form($form, &$form_state) {
 
   return $form;
 } // end function button_field_dummy_form()
-
-/**
- * Callback function for ajax calls when button is clicked.
- *
- * @todo See if we can make use of Drupal's ajax commands
- */
-function button_field_callback() {
-  $entity = entity_load_single($_REQUEST['entity_type'], $_REQUEST['entity_id']);
-  $field = field_read_field($_REQUEST['field_name']);
-  $entity_wrapper = entity_metadata_wrapper($_REQUEST['entity_type'], $entity);
-  rules_invoke_all('button_field_clicked', $field, $entity_wrapper);
-
-  return _button_field_ajax_response();
-} // end function button_field_callback()
 
 /**
  * Callback function for the FAPI ajax framework, used on edit forms.
