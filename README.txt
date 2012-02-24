@@ -13,7 +13,7 @@ from the edit form
 - Makes much better use of Drupal's Forms API (FAPI)
 - Utilizes Drupal's Ajax Framework
 
-Upgrading from Druapl 6
+Upgrading from Drupal 6
 =======================
 This module provides no update path of its own from Drupal 6 to Drupal 7. To
 migrate your existing fields, take a look at http://drupal.org/node/1144136. To
