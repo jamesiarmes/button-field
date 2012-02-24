@@ -130,11 +130,9 @@ function button_field_field_formatter_view($entity_type, $entity, $field,
   $ids = entity_extract_ids($entity_type, $entity);
   $entity_id = $ids[0];
 
-  // Build the field element id and the javascript settings for the field
+  // Build the field element
   $delta = (isset($display['views_row_id']) ? $display['views_row_id'] : 0);
   $id = _button_field_build_id($field, 'view', $delta, $langcode);
-  _button_field_build_settings($id, $field, $entity_type, $entity_id);
-
   $element = _button_field_build_element($id, $instance, $entity_type, $entity);
   
   $form_state = array(
@@ -414,28 +412,6 @@ function _button_field_build_element($id, $instance, $entity_type, $entity) {
 
   return $element;
 } // end function _button_field_build_element()
-
-/**
- * Builds the javascript settings for the field.
- *
- * @param string $id
- *   Id of the buton field element.
- * @param array $field
- *   Field being rendered.
- * @param string $entity_type
- *   Type of the entity that the field is being rendered on.
- * @param integer $entity_id
- *   Id of the entity that the field is being rendered on
- */
-function _button_field_build_settings($id, $field, $entity_type, $entity_id) {
-  $settings[$id] = array(
-      'confirmation' => $field['settings']['confirmation'],
-      'entity_id' => $entity_id,
-      'entity_type' => $entity_type,
-      'field_name' => $field['field_name'],
-  ); // end $settings[$id]
-  drupal_add_js($settings, 'setting');
-} // end function _button_field_build_settings()
 
 /**
  * Builds the id for a button field instance.
