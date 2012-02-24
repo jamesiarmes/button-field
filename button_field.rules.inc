@@ -14,7 +14,7 @@ function button_field_rules_action_info() {
   return array(
     'button_field_action_reload' => array(
       'label' => t('Reload the current page'),
-      'group' => t('System'),
+      'group' => t('Button Field'),
     ),
   );
 } // end function button_field_rules_action_info()
