@@ -4,7 +4,7 @@ Drupal.behaviors.buttonFieldBehavior = function(context) {
       process = true;
     
     // if a confirmation message was provided then display it now
-    if (Drupal.settings[id].confirmation) {
+    if (Drupal.settings[id] && Drupal.settings[id].confirmation) {
       process = confirm(Drupal.settings[id].confirmation);
     } // end if a confirmation message was provided
     

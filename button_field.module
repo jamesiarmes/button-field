@@ -161,8 +161,10 @@ function theme_button_field_formatter_default($element) {
     '/css/button_field.css');
   
   // add the confirmation setting
-  $settings[$name] = array('confirmation' => $field['confirmation']);
-  drupal_add_js($settings, 'setting');
+  if (!empty($field['confirmation'])) {
+    $settings[$name] = array('confirmation' => $field['confirmation']);
+    drupal_add_js($settings, 'setting');
+  }
   
   // determine the widget type
   switch ($field['widget']['type']) {
